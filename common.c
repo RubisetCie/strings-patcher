@@ -132,8 +132,9 @@ int search_and_replace(char *data, const char *search, const char *replace, size
         if (c >= searchLen)
         {
             c = 0;
-            ret = 0;
             state = 1;
+            if (ret == 1)
+                ret = 0;
 
             /* Count the occurrences of the search */
             const size_t count = count_occurrences(&data[offset], search, &curLen, searchLen, len - offset);
@@ -171,6 +172,14 @@ int search_and_replace(char *data, const char *search, const char *replace, size
     }
 
     free(buffer);
+
+    /* Print a status message in case there's an error remaining */
+    switch (ret)
+    {
+        case 0: puts("The operation completed successfully."); break;
+        case 1: fputs("The string could not be found!\n", stderr); break;
+        case 2: fputs("One or more strings couldn't be replaced because they didn't fit!\n", stderr); break;
+    }
 
     return ret;
 }
@@ -215,8 +224,9 @@ int search_and_replace_exact(char *data, const char *search, const char *replace
         if (c > searchLen && data[i] == 0)
         {
             c = 0;
-            ret = 0;
             state = 0;
+            if (ret == 1)
+                ret = 0;
 
             const size_t available = available_length(&data[offset], len - offset);
             if (replaceLen > available)
@@ -231,6 +241,14 @@ int search_and_replace_exact(char *data, const char *search, const char *replace
             /* Add zeros padding */
             memset(&data[offset] + replaceLen, 0, available - replaceLen);
         }
+    }
+
+    /* Print a status message in case there's an error remaining */
+    switch (ret)
+    {
+        case 0: puts("The operation completed successfully."); break;
+        case 1: fputs("The string could not be found!\n", stderr); break;
+        case 2: fputs("One or more strings couldn't be replaced because they didn't fit!\n", stderr); break;
     }
 
     return ret;
