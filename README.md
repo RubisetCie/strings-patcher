@@ -5,7 +5,7 @@
 It's features are the following:
 
 - Replace exact matches.
-- Match and replace using sub-strings.
+- Match and replace by substitution.
 
 Patching strings has a limitation: it's **impossible to replace a string with one longer than the original one, only shorter**!
 
