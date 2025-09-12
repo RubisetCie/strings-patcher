@@ -13,7 +13,7 @@ Patching strings has a limitation: it's **impossible to replace a string with on
 
 ## Building
 
-Building *strings-patcher* can be done using GNU Make:
+Building *string-patcher* can be done using GNU Make:
 
 ```
 make
@@ -21,7 +21,7 @@ make
 
 ## Install
 
-To install *strings-patcher*, run the following target:
+To install *string-patcher*, run the following target:
 
 ```
 make install PREFIX=(prefix)
@@ -31,7 +31,7 @@ The variable `PREFIX` defaults to `/usr/local`.
 
 ## Uninstall
 
-To uninstall *strings-patcher*, run the following target using the same prefix as specified in the install process:
+To uninstall *string-patcher*, run the following target using the same prefix as specified in the install process:
 
 ```
 make uninstall PREFIX=(prefix)

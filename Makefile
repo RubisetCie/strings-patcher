@@ -20,7 +20,7 @@ ARCH = $(shell $(CC) -dumpmachine)
 # Installation prefix
 PREFIX = /usr/local
 
-TARGET = strings-patch
+TARGET = string-patch
 
 all: $(TARGET)
 
