@@ -8,7 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iconv.h>
 #include "common.h"
+
+#define STACK_BUFFER_LENGTH 512
 
 static unsigned int count_occurrences(const char *str, const char *word, size_t *strLen, size_t wordLen, size_t len)
 {
@@ -254,10 +257,28 @@ int search_and_replace_exact(char *data, const char *search, const char *replace
     return ret;
 }
 
-void print_strings(const char *data, size_t offset_start, size_t len)
+int encode_string(iconv_t ectx, char *in, char *out, size_t inlen, size_t outlen)
+{
+    size_t ol = outlen, il = inlen;
+    char *outptr = out;
+
+    /* Reset to the initial state */
+    iconv(ectx, NULL, NULL, &outptr, &ol);
+
+    if (iconv(ectx, &in, &il, &outptr, &ol) == -1)
+        return -1;
+
+    return outlen - ol;
+}
+
+void print_strings(char *data, size_t offset_start, size_t len, const char *enc_str, const char *enc_ttx)
 {
     size_t i, l = 0;
-    const char *s = NULL;
+    char *s = NULL;
+    iconv_t ctx = (iconv_t)-1;
+
+    if (enc_str != NULL)
+        ctx = iconv_open(enc_ttx, enc_str);
 
     for (i = 0; i < len; i++)
     {
@@ -265,9 +286,37 @@ void print_strings(const char *data, size_t offset_start, size_t len)
         {
             if (l > 0)
             {
-                /* Print the string (may contains unprintable characters) */
+                /* Print the string */
+                if (ctx >= 0)
+                {
+                    /* Convert the string to the system code set */
+                    const size_t buflen = l + l; /* Double the length of the string is a good enough heuristic */
+                    int outlen;
+                    char *buffer = NULL, *out, stack[STACK_BUFFER_LENGTH];
+
+                    /* If the length is small enough, just use the stack buffer; allocate on heap otherwise */
+                    if (buflen > STACK_BUFFER_LENGTH)
+                    {
+                        if ((buffer = malloc(buflen)) == NULL)
+                            goto DEFAULT;
+                        out = buffer;
+                    }
+                    else
+                        out = stack;
+
+                    outlen = encode_string(ctx, s, out, l, buflen);
+                    if (outlen != -1)
+                        printf("%08X:%.*s\n", offset_start + i - l, outlen, out);
+
+                    /* Free the buffer */
+                    free(buffer);
+                    goto CONTINUE;
+                }
+
+              DEFAULT:
                 printf("%08X:%.*s\n", offset_start + i - l, l, s);
 
+              CONTINUE:
                 l = 0;
                 s = NULL;
             }
@@ -279,4 +328,6 @@ void print_strings(const char *data, size_t offset_start, size_t len)
             l++;
         }
     }
+
+    iconv_close(ctx);
 }

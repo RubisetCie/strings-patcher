@@ -10,6 +10,6 @@
 
 #include <stdio.h>
 
-int pe_process(FILE *in, FILE *out, const char *section, const char *search, const char *replace, int exact);
+int pe_process(FILE *in, FILE *out, const char *section, const char *encstr, const char *encttx, const char *search, const char *replace, int exact);
 
 #endif

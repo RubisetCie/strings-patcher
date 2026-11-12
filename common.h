@@ -11,6 +11,8 @@
 int search_and_replace(char *data, const char *search, const char *replace, size_t len);
 int search_and_replace_exact(char *data, const char *search, const char *replace, size_t len);
 
-void print_strings(const char *data, size_t offset_start, size_t len);
+int encode_string(iconv_t ectx, char *in, char *out, size_t inlen, size_t outlen);
+
+void print_strings(char *data, size_t offset_start, size_t len, const char *enc_str, const char *enc_ttx);
 
 #endif

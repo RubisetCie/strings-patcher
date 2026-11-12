@@ -217,7 +217,7 @@ static int pe_find_strings_section(FILE *in, const char *section, uint32_t *sect
     return 0;
 }
 
-int pe_process(FILE *in, FILE *out, const char *section, const char *search, const char *replace, int exact)
+int pe_process(FILE *in, FILE *out, const char *section, const char *encstr, const char *encttx, const char *search, const char *replace, int exact)
 {
     uint32_t sectionStringsAddress, sectionStringsLen;
     char *strtab = NULL;
@@ -304,7 +304,7 @@ int pe_process(FILE *in, FILE *out, const char *section, const char *search, con
     else
     {
         /* Just lay down the list of strings in the section (with their offset) */
-        print_strings(strtab, sectionStringsAddress, sectionStringsLen);
+        print_strings(strtab, sectionStringsAddress, sectionStringsLen, encstr, encttx);
     }
 
   RET:
