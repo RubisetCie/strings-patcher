@@ -6,6 +6,7 @@ It's features are the following:
 
 - Replace exact matches.
 - Match and replace by substitution.
+- Supports multiple encoding (`UTF-8`, `ISO8859-1`, `WINDOWS-1258`, etc)
 
 Patching strings has a limitation: it's **impossible to replace a string with one longer than the original one, only shorter**!
 
