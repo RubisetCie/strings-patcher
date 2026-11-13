@@ -20,6 +20,18 @@ Building *string-patcher* can be done using GNU Make:
 make
 ```
 
+For building on Windows, you might need to link `libiconv`:
+
+```
+make LDFLAGS='-liconv'
+```
+
+In order to disable the encoding feature (if `libiconv` is not available for example), you can define a macro:
+
+```
+make CFLAGS='-DNO_ENCODING'
+```
+
 ## Install
 
 To install *string-patcher*, run the following target:

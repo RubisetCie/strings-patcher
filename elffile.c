@@ -397,7 +397,16 @@ static int elf_find_strings_section(FILE *in, const char *section, Word *section
     return ret;
 }
 
-int elf_process(FILE *in, FILE *out, const char *section, const char *encstr, const char *encttx, const char *search, const char *replace, int exact)
+int elf_process(FILE *in
+               ,FILE *out
+               ,const char *section
+#ifndef NO_ENCODING
+               ,const char *encstr
+               ,const char *encttx
+#endif
+               ,const char *search
+               ,const char *replace
+               ,int exact)
 {
     ElfAttrs attrs;
     Word sectionStringsAddress, sectionStringsLen;
@@ -489,7 +498,14 @@ int elf_process(FILE *in, FILE *out, const char *section, const char *encstr, co
     else
     {
         /* Just lay down the list of strings in the section (with their offset) */
-        print_strings(strtab, strtab_loc, strtab_len, encstr, encttx);
+        print_strings(strtab
+                     ,strtab_loc
+                     ,strtab_len
+#ifndef NO_ENCODING
+                     ,encstr
+                     ,encttx
+#endif
+                     );
     }
 
   RET:

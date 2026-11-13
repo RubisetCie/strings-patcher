@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iconv.h>
 #include "common.h"
 
 #define STACK_BUFFER_LENGTH 512
@@ -257,6 +256,7 @@ int search_and_replace_exact(char *data, const char *search, const char *replace
     return ret;
 }
 
+#ifndef NO_ENCODING
 int encode_string(iconv_t ectx, char *in, char *out, size_t inlen, size_t outlen)
 {
     size_t ol = outlen, il = inlen;
@@ -270,15 +270,25 @@ int encode_string(iconv_t ectx, char *in, char *out, size_t inlen, size_t outlen
 
     return outlen - ol;
 }
+#endif
 
-void print_strings(char *data, size_t offset_start, size_t len, const char *enc_str, const char *enc_ttx)
+void print_strings(char *data
+                  ,size_t offset_start
+                  ,size_t len
+#ifndef NO_ENCODING
+                  ,const char *enc_str
+                  ,const char *enc_ttx
+#endif
+                  )
 {
     size_t i, l = 0;
     char *s = NULL;
-    iconv_t ctx = (iconv_t)-1;
 
+#ifndef NO_ENCODING
+    iconv_t ctx = (iconv_t)-1;
     if (enc_str != NULL)
         ctx = iconv_open(enc_ttx, enc_str);
+#endif
 
     for (i = 0; i < len; i++)
     {
@@ -286,6 +296,7 @@ void print_strings(char *data, size_t offset_start, size_t len, const char *enc_
         {
             if (l > 0)
             {
+#ifndef NO_ENCODING
                 /* Print the string */
                 if (ctx >= 0)
                 {
@@ -312,8 +323,8 @@ void print_strings(char *data, size_t offset_start, size_t len, const char *enc_
                     free(buffer);
                     goto CONTINUE;
                 }
-
               DEFAULT:
+#endif
                 printf("%08X:%.*s\n", offset_start + i - l, l, s);
 
               CONTINUE:
@@ -329,5 +340,7 @@ void print_strings(char *data, size_t offset_start, size_t len, const char *enc_
         }
     }
 
+#ifndef NO_ENCODING
     iconv_close(ctx);
+#endif
 }
